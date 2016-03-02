@@ -1,0 +1,14 @@
+all:
+  root_package: "your_cool_service"
+  project_type: "gb"
+
+code_coverage:
+  threshold: 50.0
+  ignored_packages:
+    - "your_cool_service/neat_package"
+
+go_vet:
+  ignored_packages: []
+
+golint:
+  ignored_packages: []
