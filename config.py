@@ -9,6 +9,7 @@ ___maintainer___ = "Jim Hill"
 ___email___ = "jimi2204@googlemail.com"
 ___status___ = "Development"
 
+
 class Config(dict):
     def __init__(self, d):
         d = {k: Config(d[k]) if type(d[k]) is dict else d[k] for k in d}
