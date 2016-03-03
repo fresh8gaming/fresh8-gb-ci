@@ -41,7 +41,7 @@ def validate_config():
     pass
 
 
-def code_coverage():
+def code_coverage(package):
     """
 
     Runs go test -cover, parses the output line by line
@@ -58,7 +58,7 @@ def code_coverage():
 
     # E.G `GOPATH=${PWD}:${PWD}/vendor go test pipeline/... -cover`
     p = subprocess.Popen(
-        ['GOPATH=' + gopath + ' go test ' + config.all.root_package
+        ['GOPATH=' + gopath + ' go test ' + package
             + '/... -cover'],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -71,7 +71,7 @@ def code_coverage():
         has_error = True
 
     lines = out.split('\n')
-    package_pattern = re.compile(config.all.root_package + r'(\/[a-z\/]+)?')
+    package_pattern = re.compile(package + r'(\/[a-z\/]+)?')
     coverage_pattern = re.compile(r'[0-9]{1,3}.[0-9]%')
 
     for line in lines:
@@ -115,7 +115,7 @@ def code_coverage():
         print("CODE COVERAGE: PASS")
 
 
-def go_lint():
+def go_lint(package):
     """
 
     Runs golint on all packages
@@ -128,7 +128,7 @@ def go_lint():
     output = ""
 
     p = subprocess.Popen(
-        ['golint src/' + config.all.root_package + '/...'],
+        ['golint src/' + package + '/...'],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -136,7 +136,7 @@ def go_lint():
     out, err_output = p.communicate()
 
     lines = out.split('\n')
-    package_pattern = re.compile(config.all.root_package + r'(\/[a-z\/]+)?.go')
+    package_pattern = re.compile(package + r'(\/[a-z\/]+)?.go')
     file_pattern = re.compile(r'\/[a-z]+.go')
 
     for line in lines:
@@ -164,7 +164,7 @@ def go_lint():
         print("GOLINT: PASS")
 
 
-def go_vet():
+def go_vet(package):
     """
 
     Runs go vet on all packages with all flags enabled
@@ -177,7 +177,7 @@ def go_vet():
     output = ""
 
     p = subprocess.Popen(
-        ['go vet ' + config.all.root_package + '/...'],
+        ['go vet ' + package + '/...'],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -185,7 +185,7 @@ def go_vet():
     out, err_output = p.communicate()
 
     lines = err_output.split('\n')
-    package_pattern = re.compile(config.all.root_package + r'(\/[a-z\/]+)?.go')
+    package_pattern = re.compile(package + r'(\/[a-z\/]+)?.go')
     file_pattern = re.compile(r'\/[a-z]+.go')
 
     for line in lines:
@@ -219,15 +219,21 @@ if config.all.project_type != "gb":
     print("Non gb projects unsupported")
     sys.exit(0)
 
-gopath = "%s:%s/vendor" % (os.getcwd(), os.getcwd())
+if len(config.all.packages) == 0:
+    print("No packages listed to test")
+    sys.exit(1)
 
+gopath = "%s:%s/vendor" % (os.getcwd(), os.getcwd())
 # used to track whether errors have occured accross the tests
 has_error = False
 
-# implement your ci tests here
-code_coverage()
-go_lint()
-go_vet()
+for package in config.all.packages:
+    print("BEGINNING TESTS FOR: " + package + "\n")
+    # implement your ci tests here
+    code_coverage(package)
+    go_lint(package)
+    go_vet(package)
+
 
 if has_error:
     print("Please rectify the above errors.")

@@ -10,6 +10,6 @@ class Config(dict):
         return self.get(attr)
 
 
-_config_file = open("ci/config.yaml", "r")
+_config_file = open("ci_config.yaml", "r")
 config = Config(yaml.load(_config_file))
 _config_file.close()

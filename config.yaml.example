@@ -1,5 +1,6 @@
 all:
-  root_package: "your_cool_service"
+  packages:
+   - "your_cool_package"
   project_type: "gb"
 
 code_coverage:
