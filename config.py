@@ -1,5 +1,13 @@
 import yaml
 
+___author___ = "Lee Archer (github.com/lbn)"
+___credits___ = ["Jim Hill (github.com/jimah)",
+                 "Lee Archer (github.com/lbn)"]
+___license___ = "MIT"
+___version___ = "1.0"
+___maintainer___ = "Jim Hill"
+___email___ = "jimi2204@googlemail.com"
+___status___ = "Development"
 
 class Config(dict):
     def __init__(self, d):
