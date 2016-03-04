@@ -1,8 +1,19 @@
 #!/usr/bin/env python
-"""Short description
+"""The main executable file, wraps a variety of cli tools to pass/fail builds.
 
-Long informative description
+Iterates through all packages listed in config.yaml and runs the associated
+tools. Currently hardcoded to include all of them. Each tool will run as a
+subprocess with the output piped into python. Regex is then used to determine
+the necessary information.
+
+Tracks whether an error has occured using a global variable `has_error`.
+
+GOPATH is currently hardcoded, making it configurable is on the roadmap.
+
+We're currently using the python3 style print, however a case may be made
+to move it back to python2 style.
 """
+
 from __future__ import print_function
 
 import os
