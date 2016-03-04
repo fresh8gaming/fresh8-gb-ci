@@ -11,6 +11,7 @@ ___status___ = "Development"
 
 
 class Config(dict):
+
     def __init__(self, d):
         d = {k: Config(d[k]) if type(d[k]) is dict else d[k] for k in d}
         super(Config, self).__init__(d)
