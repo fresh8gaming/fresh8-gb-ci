@@ -47,7 +47,7 @@ golint:
 
 ### Codeship
 
-To integrate with cadetship, first add your `config.yaml` as per all systems, then add the following commands to your `Test Pipeline` for the project.
+To integrate with codeship, first add your `config.yaml` as per all systems, then add the following commands to your `Test Pipeline` for the project.
 
 ```bash
 git clone https://github.com/ConnectedVentures/fresh8-gb-ci
