@@ -35,7 +35,7 @@ all:
 code_coverage:
   threshold: 90.0
   ignored_packages:
-    - "your_cool_service/neat_package"
+    - "your_cool_package/neat_inner_package"
 
 go_vet:
   ignored_packages: []

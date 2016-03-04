@@ -4,9 +4,9 @@ all:
   project_type: "gb"
 
 code_coverage:
-  threshold: 50.0
+  threshold: 90.0
   ignored_packages:
-    - "your_cool_service/neat_package"
+    - "your_cool_package/neat_inner_package"
 
 go_vet:
   ignored_packages: []
