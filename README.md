@@ -14,11 +14,11 @@ Currently supports the following commands:
 
 Take a copy of `config.yaml.example` from the repository, or copy it from the example below and place it in the root of your project as `config.yaml`. If your project is `gb` based this will be alongside your `src` and `vendor` directories.
 
-Note: We currently only support `gb` style projects, so please do not change the `project_type` configuration setting. Nothing bad will happen if you do, it just won’t run!
+**Note**: We currently only support `gb` style projects, so please do not change the `project_type` configuration setting. Nothing bad will happen if you do, it just won’t run!
 
 The packages list should include all of the base packages you want to test, the tests are run recursively so there’s no need to include every inner package.
 
-Note: Packages should not include a trailing slash.
+**Note**: Packages should not include a trailing slash.
 
 `ignored_packages` should include a list of the packages you don’t want to be tested, let’s say they’re actively in development and changing a lot you may not want the test coverage tool running every time.
 
@@ -68,6 +68,7 @@ pip install pyyaml
 * Travis ci.
 * Non gb projects.
 * Enabling / disabling tools in config.yaml (e.g disabling coverage).
+* Account for trailing slash gotcha
 * Investigate nicer way of installing dependencies.
 * Investigate build warnings rather than outright fails.
 
