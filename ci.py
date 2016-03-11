@@ -88,7 +88,6 @@ def code_coverage(package):
     coverage_cum = 0.0
 
     for line in lines:
-
         package = re.search(package_pattern, line)
 
         if package is None:
