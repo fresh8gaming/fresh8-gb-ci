@@ -84,6 +84,9 @@ def code_coverage(package):
     package_pattern = re.compile(package + r'(\/[a-z\/]+)?')
     coverage_pattern = re.compile(r'[0-9]{1,3}.[0-9]%')
 
+    coverage_count = 0
+    coverage_cum = 0.0
+
     for line in lines:
 
         package = re.search(package_pattern, line)
@@ -111,18 +114,30 @@ def code_coverage(package):
                     package + " under coverage threshold at " +
                     coverage + "\n")
 
+            coverage_cum += cv
+
         elif "[no test files]" in line:
             err = True
             output += (package + " has no tests.\n")
 
+        coverage_count += 1
+
     if err and not has_error:
         has_error = err
 
+    total_coverage = round(coverage_cum / coverage_count, 2)
+
     if err:
         print("CODE COVERAGE: FAIL")
+        print("Current coverage: " + str(total_coverage) + "%")
+        print("Coverage threshold: " +
+              str(config.code_coverage.threshold) + "%")
         print(output)
     else:
         print("CODE COVERAGE: PASS")
+        print("Current coverage: " + str(total_coverage) + "%")
+        print("Coverage threshold: " +
+              str(config.code_coverage.threshold) + "%")
 
 
 def go_lint(package):
@@ -243,12 +258,15 @@ for package in config.all.packages:
     # implement your ci tests here
     if "code_coverage" not in config.all.ignored_commands:
         code_coverage(package)
+        print("")
 
     if "go_lint" not in config.all.ignored_commands:
         go_lint(package)
+        print("")
 
     if "go_vet" not in config.all.ignored_commands:
         go_vet(package)
+        print("")
 
 
 if has_error:
