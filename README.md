@@ -18,6 +18,8 @@ Take a copy of `config.yaml.example` from the repository, or copy it from the ex
 
 The packages list should include all of the base packages you want to test, the tests are run recursively so there’s no need to include every inner package.
 
+You may also ignore test commands, for example to ignore code coverage add "code_coverage" to the ignored_commandsd array.
+
 **Note**: Packages should not include a trailing slash.
 
 `ignored_packages` should include a list of the packages you don’t want to be tested, let’s say they’re actively in development and changing a lot you may not want the test coverage tool running every time.
@@ -31,6 +33,7 @@ all:
   packages:
    - "your_cool_package"
   project_type: "gb"
+  ignored_commands: []
 
 code_coverage:
   threshold: 90.0
@@ -67,7 +70,6 @@ pip install pyyaml
 
 * Travis ci.
 * Non gb projects.
-* Enabling / disabling tools in config.yaml (e.g disabling coverage).
 * Account for trailing slash gotcha
 * Investigate nicer way of installing dependencies.
 * Investigate build warnings rather than outright fails.
