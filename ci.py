@@ -120,9 +120,11 @@ def code_coverage(package):
 
     if err:
         print("CODE COVERAGE: FAIL")
+        print("Coverage threshold: " + config.code_coverage.threshold)
         print(output)
     else:
         print("CODE COVERAGE: PASS")
+        print("Coverage threshold: " + config.code_coverage.threshold)
 
 
 def go_lint(package):
