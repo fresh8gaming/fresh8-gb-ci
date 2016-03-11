@@ -1,4 +1,5 @@
 # Fresh8 gb continuous integration
+[![Build Status](https://travis-ci.org/ConnectedVentures/fresh8-gb-ci.svg?branch=master)](https://travis-ci.org/ConnectedVentures/fresh8-gb-ci)
 
 Fresh8-gb-ci is a library in ongoing development to provide an easily integrated continuous integration solution for gb projects. We created this due to our large amount of micro services all requiring a separate, or slightly different, CI script. This tool can be cloned and run as part of your continuous integration testing process using a lightweight config file in the root of the project.
 
