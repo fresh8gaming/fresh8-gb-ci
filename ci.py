@@ -69,8 +69,8 @@ def code_coverage(package):
 
     # E.G `GOPATH=${PWD}:${PWD}/vendor go test pipeline/... -cover`
     p = subprocess.Popen(
-        ['GOPATH=' + gopath + ' go test ' + package
-            + '/... -cover'],
+        ['GOPATH=' + gopath + ' go test ' + package +
+            '/... -cover'],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -240,10 +240,16 @@ has_error = False
 
 for package in config.all.packages:
     print("BEGINNING TESTS FOR: " + package + "\n")
+
     # implement your ci tests here
-    code_coverage(package)
-    go_lint(package)
-    go_vet(package)
+    if "code_coverage" not in config.all.ignored_commands:
+        code_coverage(package)
+
+    if "go_lint" not in config.all.ignored_commands:
+        go_lint(package)
+
+    if "go_vet" not in config.all.ignored_commands:
+        go_vet(package)
 
 
 if has_error:

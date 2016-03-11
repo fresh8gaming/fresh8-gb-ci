@@ -2,6 +2,7 @@ all:
   packages:
    - "your_cool_package"
   project_type: "gb"
+  ignored_commands: []
 
 code_coverage:
   threshold: 90.0
