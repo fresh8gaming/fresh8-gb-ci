@@ -70,7 +70,6 @@ pip install pyyaml
 
 * Travis ci.
 * Non gb projects.
-* Enabling / disabling tools in config.yaml (e.g disabling coverage).
 * Account for trailing slash gotcha
 * Investigate nicer way of installing dependencies.
 * Investigate build warnings rather than outright fails.
