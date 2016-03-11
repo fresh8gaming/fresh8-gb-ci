@@ -69,8 +69,7 @@ def code_coverage(package):
 
     # E.G `GOPATH=${PWD}:${PWD}/vendor go test pipeline/... -cover`
     p = subprocess.Popen(
-        ['GOPATH=' + gopath + ' go test ' + package +
-            '/... -cover'],
+        ["GOPATH=" + gopath + " go test " + package + "/... -cover"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -139,7 +138,7 @@ def go_lint(package):
     output = ""
 
     p = subprocess.Popen(
-        ['golint src/' + package + '/...'],
+        ["golint src/" + package + "/..."],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -188,7 +187,7 @@ def go_vet(package):
     output = ""
 
     p = subprocess.Popen(
-        ['go vet ' + package + '/...'],
+        ["go vet " + package + "/..."],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
