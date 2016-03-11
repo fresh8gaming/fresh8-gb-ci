@@ -129,13 +129,15 @@ def code_coverage(package):
 
     if err:
         print("CODE COVERAGE: FAIL")
-        print("Current coverage: " + str(total_coverage))
-        print("Coverage threshold: " + str(config.code_coverage.threshold))
+        print("Current coverage: " + str(total_coverage) + "%")
+        print("Coverage threshold: " +
+              str(config.code_coverage.threshold) + "%")
         print(output)
     else:
         print("CODE COVERAGE: PASS")
-        print("Current coverage: " + str(total_coverage))
-        print("Coverage threshold: " + str(config.code_coverage.threshold))
+        print("Current coverage: " + str(total_coverage) + "%")
+        print("Coverage threshold: " +
+              str(config.code_coverage.threshold) + "%")
 
 
 def go_lint(package):
@@ -256,12 +258,15 @@ for package in config.all.packages:
     # implement your ci tests here
     if "code_coverage" not in config.all.ignored_commands:
         code_coverage(package)
+        print("")
 
     if "go_lint" not in config.all.ignored_commands:
         go_lint(package)
+        print("")
 
     if "go_vet" not in config.all.ignored_commands:
         go_vet(package)
+        print("")
 
 
 if has_error:
