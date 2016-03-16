@@ -237,6 +237,47 @@ def go_vet(package):
         print("GO VET: PASS")
 
 
+def grep_init(package):
+    """
+
+    Runs grep recursively through the source folder looking for instances of
+    the init() go function being used.
+
+    """
+    global has_error
+
+    err = False
+    output = ""
+
+    p = subprocess.Popen(
+        ["grep -n -R \"func init()\" src/" + package],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=True)
+
+    out, err_output = p.communicate()
+    output = ""
+
+    if out != '':
+        lines = out.split('\n')
+
+        for line in lines:
+
+            if "_test.go" in line:
+                continue
+
+            output += (line + '\n')
+            err = True
+
+    if err and not has_error:
+        has_error = err
+
+    if err:
+        print("USE OF INIT: FAIL")
+        print(output)
+    else:
+        print("USE OF INIT: PASS")
+
 # Pulled from config.py in the same dir
 if config.all.project_type != "gb":
     print(config.all.project_type)
@@ -265,6 +306,10 @@ for package in config.all.packages:
 
     if "go_vet" not in config.all.ignored_commands:
         go_vet(package)
+        print("")
+
+    if "grep_init" not in config.all.ignored_commands:
+        grep_init(package)
         print("")
 
 
