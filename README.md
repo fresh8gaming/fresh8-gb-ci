@@ -54,7 +54,7 @@ golint:
 To integrate with codeship, first add your `config.yaml` as per all systems, then add the following commands to your `Test Pipeline` for the project.
 
 ```bash
-git clone https://github.com/ConnectedVentures/fresh8-gb-ci
+git clone --branch 1.0.0 https://github.com/ConnectedVentures/fresh8-gb-ci
 
 env GOPATH=$(pwd):$(pwd)/vendor python fresh8-gb-ci/ci.py
 ```
