@@ -70,6 +70,7 @@ pip install pyyaml
 ## Roadmap
 
 * Static code analysis for init functions.
+* Tidy up into a more class based structure, reduce code reuse.
 * Travis ci.
 * Non gb projects.
 * Account for trailing slash gotcha
