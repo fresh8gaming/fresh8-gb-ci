@@ -37,7 +37,7 @@ all:
   ignored_commands: []
 
 code_coverage:
-  threshold: 90.0
+  threshold: 80.0
   ignored_packages:
     - "your_cool_package/neat_inner_package"
 
