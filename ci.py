@@ -237,7 +237,7 @@ def go_vet(package):
         print("GO VET: PASS")
 
 
-def grep_init(package):
+def check_use_of_init(package):
     """
 
     Runs grep recursively through the source folder looking for instances of
@@ -260,10 +260,23 @@ def grep_init(package):
 
     if out != '':
         lines = out.split('\n')
+        package_pattern = re.compile(package + r'(\/[a-z\/]+)?.go')
+        file_pattern = re.compile(r'\/[a-z]+.go')
 
         for line in lines:
 
             if "_test.go" in line:
+                continue
+
+            package = re.search(package_pattern, line)
+
+            if package is None:
+                continue
+
+            package = package.group(0)
+            package = re.sub(file_pattern, '', package)
+
+            if package in config.check_use_of_init.ignored_packages:
                 continue
 
             output += (line + '\n')
@@ -308,8 +321,8 @@ for package in config.all.packages:
         go_vet(package)
         print("")
 
-    if "grep_init" not in config.all.ignored_commands:
-        grep_init(package)
+    if "check_use_of_init" not in config.all.ignored_commands:
+        check_use_of_init(package)
         print("")
 
 
