@@ -81,7 +81,7 @@ def code_coverage(package):
         has_error = True
 
     lines = out.split('\n')
-    package_pattern = re.compile(package + r'(\/[a-z\/]+)?')
+    package_pattern = re.compile(package + r'(\/[a-zA-Z0-9\/]+)?')
     coverage_pattern = re.compile(r'[0-9]{1,3}.[0-9]%')
 
     coverage_count = 0
@@ -160,8 +160,8 @@ def go_lint(package):
     out, err_output = p.communicate()
 
     lines = out.split('\n')
-    package_pattern = re.compile(package + r'(\/[a-z\/]+)?.go')
-    file_pattern = re.compile(r'\/[a-z]+.go')
+    package_pattern = re.compile(package + r'(\/[a-zA-Z0-9\/]+)?.go')
+    file_pattern = re.compile(r'\/[a-zA-Z0-9]+.go')
 
     for line in lines:
         package = re.search(package_pattern, line)
@@ -209,8 +209,8 @@ def go_vet(package):
     out, err_output = p.communicate()
 
     lines = err_output.split('\n')
-    package_pattern = re.compile(package + r'(\/[a-z\/]+)?.go')
-    file_pattern = re.compile(r'\/[a-z]+.go')
+    package_pattern = re.compile(package + r'(\/[a-zA-Z0-9\/]+)?.go')
+    file_pattern = re.compile(r'\/[a-zA-Z0-9]+.go')
 
     for line in lines:
         package = re.search(package_pattern, line)
