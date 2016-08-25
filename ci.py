@@ -25,6 +25,7 @@ from config import config
 ___author___ = "Jim Hill (github.com/jimah)"
 ___credits___ = ["Jim Hill (github.com/jimah)",
                  "Lee Archer (github.com/lbn)",
+                 "Dom Udall (github.com/domudall)",
                  "Chris Mallon (github.com/JaegerBane)"]
 ___license___ = "MIT"
 ___version___ = "1.0"
@@ -188,6 +189,69 @@ def go_lint(package):
         print("GOLINT: PASS")
 
 
+def go_timeouts():
+    """
+
+    Runs through all .go files and ensures default http lib functions
+    are not used
+
+    """
+
+    def get_error_message_for_line(match, pattern):
+        return filename_match.group(1) + " contains default http function `"
+        + pattern + "` on line " + filename_match.group(2) + "\n"
+
+    global has_error
+
+    err = False
+    output = ""
+
+    patterns = [
+        "http.ListenAndServe(",
+        "http.Get(",
+        "http.Post(",
+        "http.PostForm(",
+        "http.Head("
+    ]
+
+    for pattern in patterns:
+        p = subprocess.Popen(
+            ["grep '" + pattern + "' src -R -n"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True)
+
+        out, err_output = p.communicate()
+
+        if out != '':
+            lines = out.split('\n')
+            file_pattern = re.compile('^([a-zA-Z0-9\/]+.go)\:([0-9]+)')
+
+            for line in lines:
+                filename_match = re.match(file_pattern, line)
+
+                if filename_match is None:
+                    continue
+
+                err = True
+                output += get_error_message_for_line(filename_match, pattern)
+
+    if err and not has_error:
+        has_error = err
+
+    if err:
+        print("GO TIMEOUTS: FAIL")
+        print(output)
+
+        hint = "For more info on why this is bad, please read "
+        + "https://blog.cloudflare.com"
+        + "/the-complete-guide-to-golang-net-http-timeouts/"
+        print(hint)
+        print()
+    else:
+        print("GO TIMEOUTS: PASS")
+
+
 def go_vet(package):
     """
 
@@ -265,6 +329,10 @@ for package in config.all.packages:
 
     if "go_vet" not in config.all.ignored_commands:
         go_vet(package)
+        print("")
+
+    if "go_timeouts" not in config.all.ignored_commands:
+        go_timeouts()
         print("")
 
 
