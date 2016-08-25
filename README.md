@@ -69,13 +69,13 @@ pip install pyyaml
 
 ## Roadmap
 
-* Static code analysis for init functions.
+* Static code analysis: use of init functions.
+* Ignore immediately following line (`// f8-ignore: [ init ]`) for cases when usage is unavoidable.
+* Static code analysis: use of function calls in package level variable declaration. (e.g `var x = y()`)
 * Tidy up into a more class based structure, reduce code reuse.
-* Travis ci.
+* Test other CI platforms than codeship.
 * Non gb projects.
-* Account for trailing slash gotcha
-* Investigate nicer way of installing dependencies.
-* Investigate build warnings rather than outright fails.
+* Investigate build warnings rather than outright fails for CI platforms that support it.
 
 ## Contributing
 
