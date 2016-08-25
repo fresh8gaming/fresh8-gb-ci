@@ -192,7 +192,8 @@ def go_lint(package):
 def go_timeouts():
     """
 
-    Runs through all .go files and ensures default http lib functions are not used
+    Runs through all .go files and ensures default http lib functions
+    are not used
 
     """
     global has_error
@@ -201,11 +202,11 @@ def go_timeouts():
     output = ""
 
     patterns = [
-    "http.ListenAndServe(",
-    "http.Get(",
-    "http.Post(",
-    "http.PostForm(",
-    "http.Head("
+        "http.ListenAndServe(",
+        "http.Get(",
+        "http.Post(",
+        "http.PostForm(",
+        "http.Head("
     ]
 
     for pattern in patterns:
@@ -228,7 +229,9 @@ def go_timeouts():
                     continue
 
                 err = True
-                output += filename_match.group(1) + " contains default http function `" + pattern + "` on line " + filename_match.group(2) + "\n"
+                output += filename_match.group(1)
+                + " contains default http function `" + pattern
+                + "` on line " + filename_match.group(2) + "\n"
 
     if err and not has_error:
         has_error = err
@@ -236,10 +239,15 @@ def go_timeouts():
     if err:
         print("GO TIMEOUTS: FAIL")
         print(output)
-        print("For more info on why this is bad, please read https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")
+
+        hint = "For more info on why this is bad, please read "
+        + "https://blog.cloudflare.com"
+        + "/the-complete-guide-to-golang-net-http-timeouts/"
+        print(hint)
         print()
     else:
         print("GO TIMEOUTS: PASS")
+
 
 def go_vet(package):
     """
