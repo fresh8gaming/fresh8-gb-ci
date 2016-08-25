@@ -25,6 +25,7 @@ from config import config
 ___author___ = "Jim Hill (github.com/jimah)"
 ___credits___ = ["Jim Hill (github.com/jimah)",
                  "Lee Archer (github.com/lbn)",
+                 "Dom Udall (github.com/domudall)",
                  "Chris Mallon (github.com/JaegerBane)"]
 ___license___ = "MIT"
 ___version___ = "1.0"
@@ -188,6 +189,55 @@ def go_lint(package):
         print("GOLINT: PASS")
 
 
+def go_timeouts():
+    """
+
+    Runs through all .go files and ensures default http lib functions are not used
+
+    """
+    global has_error
+
+    err = False
+    output = ""
+
+    patterns = [
+    "http.ListenAndServe(",
+    "http.Get(",
+    "http.Post(",
+    "http.PostForm(",
+    "http.Head("
+    ]
+
+    for pattern in patterns:
+        p = subprocess.Popen(
+            ["fgrep '" + pattern + "' src/**/*.go -n"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True)
+
+        out, err_output = p.communicate()
+
+        lines = err_output.split('\n')
+        file_pattern = re.compile(r'(\/[a-zA-Z0-9\/]+)?.go:[0-9]+')
+
+        for line in lines:
+            wrong_file = re.search(file_pattern, line)
+
+            if wrong_file is None:
+                continue
+
+            err = True
+            output += line + "\n"
+
+    if err and not has_error:
+        has_error = err
+
+    if err:
+        print("GO TIMEOUTS: FAIL")
+        print(output)
+    else:
+        print("GO TIMEOUTS: PASS")
+
 def go_vet(package):
     """
 
@@ -265,6 +315,10 @@ for package in config.all.packages:
 
     if "go_vet" not in config.all.ignored_commands:
         go_vet(package)
+        print("")
+
+    if "go_timeouts" not in config.all.ignored_commands:
+        go_timeouts()
         print("")
 
 
