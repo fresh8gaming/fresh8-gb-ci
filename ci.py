@@ -217,17 +217,18 @@ def go_timeouts():
 
         out, err_output = p.communicate()
 
-        lines = err_output.split('\n')
-        file_pattern = re.compile(r'(\/[a-zA-Z0-9\/]+)?.go:[0-9]+')
+        if out != '':
+            lines = out.split('\n')
+            file_pattern = re.compile('^([a-zA-Z0-9\/]+.go)\:([0-9]+)')
 
-        for line in lines:
-            wrong_file = re.search(file_pattern, line)
+            for line in lines:
+                filename_match = re.match(file_pattern, line)
 
-            if wrong_file is None:
-                continue
+                if filename_match is None:
+                    continue
 
-            err = True
-            output += line + "\n"
+                err = True
+                output += filename_match.group(1) + " contains default http function `" + pattern + "` on line " + filename_match.group(2) + "\n"
 
     if err and not has_error:
         has_error = err
@@ -235,6 +236,8 @@ def go_timeouts():
     if err:
         print("GO TIMEOUTS: FAIL")
         print(output)
+        print("For more info on why this is bad, please read https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")
+        print()
     else:
         print("GO TIMEOUTS: PASS")
 
