@@ -210,7 +210,7 @@ def go_timeouts():
 
     for pattern in patterns:
         p = subprocess.Popen(
-            ["fgrep '" + pattern + "' src/**/*.go -n"],
+            ["grep '" + pattern + "' src -R -n"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=True)
