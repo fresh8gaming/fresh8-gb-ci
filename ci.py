@@ -244,8 +244,8 @@ def go_timeouts():
         print(output)
 
         hint = "For more info on why this is bad, please read "
-        + "https://blog.cloudflare.com"
-        + "/the-complete-guide-to-golang-net-http-timeouts/"
+        + "https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/" # noqa
+
         print(hint)
         print()
     else:
