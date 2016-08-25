@@ -69,7 +69,7 @@ pip install pyyaml
 
 ## Roadmap
 
-* Static code analysis: use of init functions.
+* Static code analysis: use of init functions. (Pull Request pending)
 * Ignore immediately following line (`// f8-ignore: [ init ]`) for cases when usage is unavoidable.
 * Static code analysis: use of function calls in package level variable declaration. (e.g `var x = y()`)
 * Tidy up into a more class based structure, reduce code reuse.
