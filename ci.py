@@ -196,6 +196,11 @@ def go_timeouts():
     are not used
 
     """
+
+    def get_error_message_for_line(match, pattern):
+        return filename_match.group(1) + " contains default http function `"
+        + pattern + "` on line " + filename_match.group(2) + "\n"
+
     global has_error
 
     err = False
@@ -229,9 +234,7 @@ def go_timeouts():
                     continue
 
                 err = True
-                output += filename_match.group(1)
-                + " contains default http function `" + pattern
-                + "` on line " + filename_match.group(2) + "\n"
+                output += get_error_message_for_line(filename_match, pattern)
 
     if err and not has_error:
         has_error = err
