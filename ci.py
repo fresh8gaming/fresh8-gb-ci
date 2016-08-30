@@ -198,8 +198,8 @@ def go_timeouts():
     """
 
     def get_error_message_for_line(match, pattern):
-        return filename_match.group(1) + " contains default http function `"
-        + pattern + "` on line " + filename_match.group(2) + "\n"
+        out = "{} contains default http function {} on line {}\n"
+        return out.format(match.group(1), pattern, match.group(2))
 
     global has_error
 
@@ -243,8 +243,8 @@ def go_timeouts():
         print("GO TIMEOUTS: FAIL")
         print(output)
 
-        hint = "For more info on why this is bad, please read "
-        + "https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/" # noqa
+        hint = "For more info on why this is bad, please read {}"
+        hint = hint.format("https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")# noqa
 
         print(hint)
         print()
