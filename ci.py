@@ -125,6 +125,10 @@ def code_coverage(package):
     if err and not has_error:
         has_error = err
 
+    if coverage_count == 0:
+        print("No packages available for coverage calculation")
+        return
+
     total_coverage = round(coverage_cum / coverage_count, 2)
 
     if err:
@@ -244,7 +248,7 @@ def go_timeouts():
         print(output)
 
         hint = "For more info on why this is bad, please read {}"
-        hint = hint.format("https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")# noqa
+        hint = hint.format("https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")  # noqa
 
         print(hint)
         print()
