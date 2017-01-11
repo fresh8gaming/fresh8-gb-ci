@@ -21,7 +21,7 @@ import subprocess
 import re
 import sys
 
-from config.config import get_config
+from utils.config import get_config
 
 ___author___ = "Jim Hill (github.com/jimah)"
 ___credits___ = ["Jim Hill (github.com/jimah)",
@@ -299,16 +299,19 @@ def go_vet(package):
 
 
 # Pulled from config.py in the same dir
-if CONFIG.all.project_type != "gb":
+if CONFIG.all.project_type not in ["gb", "glide"]:
     print(CONFIG.all.project_type)
-    print("Non gb projects unsupported")
+    print("Non gb/glide projects unsupported")
     sys.exit(0)
 
 if len(CONFIG.all.packages) == 0:
     print("No packages listed to test")
     sys.exit(1)
 
-gopath = "%s:%s/vendor" % (os.getcwd(), os.getcwd())
+# set `gopath` depending on gb or glide
+gopath = "{0}:{0}/vendor".format(os.getcwd()) \
+    if CONFIG.all.project_type == "gb" else os.getcwd()
+
 # used to track whether errors have occured accross the tests
 has_error = False
 
