@@ -1,1 +1,1 @@
-__author__ = "chloe.parkes@connected-ventures.com"
+"""Test files for the Config package."""

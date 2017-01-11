@@ -50,17 +50,14 @@ class TestConfig(unittest.TestCase):
         return {
             'code_coverage':
                 {
-                    'ignored_packages': ['your_cool_package/neat_inner_package'],
+                    'ignored_packages':
+                        ['your_cool_package/neat_inner_package'],
                     'threshold': 80.0
                 },
-            'golint': {
-                'ignored_packages': []
-            },
-            'go_vet': {
-                'ignored_packages': []
-            },
+            'golint': {'ignored_packages': []},
+            'go_vet': {'ignored_packages': []},
             'all': {
                 'packages': ['your_cool_package'],
                 'project_type': 'gb', 'ignored_commands': []
-            }
+                   },
         }
