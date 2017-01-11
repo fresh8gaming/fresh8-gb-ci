@@ -1,0 +1,16 @@
+all:
+  packages:
+   - "your_cool_package"
+  project_type: "gb"
+  ignored_commands: []
+
+code_coverage:
+  threshold: 80.0
+  ignored_packages:
+    - "your_cool_package/neat_inner_package"
+
+go_vet:
+  ignored_packages: []
+
+golint:
+  ignored_packages: []

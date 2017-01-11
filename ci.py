@@ -20,7 +20,8 @@ import os
 import subprocess
 import re
 import sys
-from config import config
+
+from config.config import get_config
 
 ___author___ = "Jim Hill (github.com/jimah)"
 ___credits___ = ["Jim Hill (github.com/jimah)",
@@ -33,6 +34,8 @@ ___maintainer___ = "Jim Hill"
 ___email___ = "jimi2204@googlemail.com"
 ___status___ = "Development"
 
+CONFIG = get_config()
+
 
 def error(*objs):
     """
@@ -41,16 +44,6 @@ def error(*objs):
 
     """
     print(*objs, file=sys.stderr)
-
-
-def validate_config():
-    """
-
-    Validates the configuration file, checks it has required fields
-
-    """
-    # TODO implement function when config is finalized
-    pass
 
 
 def code_coverage(package):
@@ -102,13 +95,13 @@ def code_coverage(package):
             # See `elif "[no test files]"`
             coverage = coverage.group(0)
 
-        if package in config.code_coverage.ignored_packages:
+        if package in CONFIG.code_coverage.ignored_packages:
             continue
 
         if coverage is not None:
             cv = float(coverage[:-1])
 
-            if cv < config.code_coverage.threshold:
+            if cv < CONFIG.code_coverage.threshold:
                 err = True
                 output += (
                     package + " under coverage threshold at " +
@@ -135,13 +128,13 @@ def code_coverage(package):
         print("CODE COVERAGE: FAIL")
         print("Current coverage: " + str(total_coverage) + "%")
         print("Coverage threshold: " +
-              str(config.code_coverage.threshold) + "%")
+              str(CONFIG.code_coverage.threshold) + "%")
         print(output)
     else:
         print("CODE COVERAGE: PASS")
         print("Current coverage: " + str(total_coverage) + "%")
         print("Coverage threshold: " +
-              str(config.code_coverage.threshold) + "%")
+              str(CONFIG.code_coverage.threshold) + "%")
 
 
 def go_lint(package):
@@ -177,7 +170,7 @@ def go_lint(package):
         package = package.group(0)
         package = re.sub(file_pattern, '', package)
 
-        if package in config.golint.ignored_packages:
+        if package in CONFIG.golint.ignored_packages:
             continue
 
         err = True
@@ -289,7 +282,7 @@ def go_vet(package):
         package = package.group(0)
         package = re.sub(file_pattern, '', package)
 
-        if package in config.go_vet.ignored_packages:
+        if package in CONFIG.go_vet.ignored_packages:
             continue
 
         err = True
@@ -306,12 +299,12 @@ def go_vet(package):
 
 
 # Pulled from config.py in the same dir
-if config.all.project_type != "gb":
-    print(config.all.project_type)
+if CONFIG.all.project_type != "gb":
+    print(CONFIG.all.project_type)
     print("Non gb projects unsupported")
     sys.exit(0)
 
-if len(config.all.packages) == 0:
+if len(CONFIG.all.packages) == 0:
     print("No packages listed to test")
     sys.exit(1)
 
@@ -319,23 +312,23 @@ gopath = "%s:%s/vendor" % (os.getcwd(), os.getcwd())
 # used to track whether errors have occured accross the tests
 has_error = False
 
-for package in config.all.packages:
+for package in CONFIG.all.packages:
     print("BEGINNING TESTS FOR: " + package + "\n")
 
     # implement your ci tests here
-    if "code_coverage" not in config.all.ignored_commands:
+    if "code_coverage" not in CONFIG.all.ignored_commands:
         code_coverage(package)
         print("")
 
-    if "go_lint" not in config.all.ignored_commands:
+    if "go_lint" not in CONFIG.all.ignored_commands:
         go_lint(package)
         print("")
 
-    if "go_vet" not in config.all.ignored_commands:
+    if "go_vet" not in CONFIG.all.ignored_commands:
         go_vet(package)
         print("")
 
-    if "go_timeouts" not in config.all.ignored_commands:
+    if "go_timeouts" not in CONFIG.all.ignored_commands:
         go_timeouts()
         print("")
 
