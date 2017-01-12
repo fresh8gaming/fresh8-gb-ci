@@ -1,6 +1,7 @@
+import os
 import unittest
-from unittest.mock import patch, Mock
 
+from mock import patch, Mock
 from ddt import ddt, data, unpack
 
 from utils.config import Config, get_config
@@ -8,11 +9,13 @@ from utils.config import Config, get_config
 
 @ddt
 class TestConfig(unittest.TestCase):
+
     def test_get_config(self):
-        config = get_config("test_config.yaml")
+        config = get_config(
+            os.path.abspath("utils/tests/test_config.yaml"))
         self.assertEqual(config, self._get_valid_config())
 
-    @patch('config.config.Config.__init__', Mock(return_value=None))
+    @patch('utils.config.Config.__init__', Mock(return_value=None))
     def test_validate_config_returns_valid(self):
         self.assertTrue(Config().validate_config(self._get_valid_config()))
 
@@ -41,7 +44,7 @@ class TestConfig(unittest.TestCase):
                                    "ignored_commands": []}}},
           )
     @unpack
-    @patch('config.config.Config.__init__', Mock(return_value=None))
+    @patch('utils.config.Config.__init__', Mock(return_value=None))
     def test_validation_config_returns_invalid(self, test_config):
         self.assertFalse(Config().validate_config(test_config))
 
