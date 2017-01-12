@@ -67,7 +67,7 @@ def code_coverage(package):
 
     # E.G `GOPATH=${PWD}:${PWD}/vendor go test pipeline/... -cover`
     p = subprocess.Popen(
-        ["GOPATH={0} go test {1}/... -cover".format(gopath, package)],
+        ["go test {0}/... -cover".format(package)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -309,10 +309,6 @@ if CONFIG.all.project_type not in ["gb", "glide"]:
 if len(CONFIG.all.packages) == 0:
     logger.critical("No packages listed to test")
     sys.exit(1)
-
-# set `gopath` depending on gb or glide
-gopath = "{0}:{0}/vendor".format(os.getcwd()) \
-    if CONFIG.all.project_type == "gb" else os.getcwd()
 
 # used to track whether errors have occured accross the tests
 has_error = False
