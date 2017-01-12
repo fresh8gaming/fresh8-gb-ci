@@ -3,7 +3,7 @@ from unittest.mock import patch, Mock
 
 from ddt import ddt, data, unpack
 
-from config.config import Config, get_config
+from utils.config import Config, get_config
 
 
 @ddt
