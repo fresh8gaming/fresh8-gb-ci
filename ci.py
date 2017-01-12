@@ -16,7 +16,6 @@ to move it back to python2 style.
 
 from __future__ import print_function
 
-import os
 import subprocess
 import re
 import sys
