@@ -15,11 +15,11 @@ Currently supports the following commands:
 
 Take a copy of `config.yaml.example` from the repository, or copy it from the example below and place it in the root of your project as `ci_config.yaml`. If your project is `gb` based this will be alongside your `src` and `vendor` directories.
 
-**Note**: We currently only support `gb` style projects, so please do not change the `project_type` configuration setting. Nothing bad will happen if you do, it just won’t run!
+**Note**: We now support `gb` and `glide` projects.
 
 The packages list should include all of the base packages you want to test, the tests are run recursively so there’s no need to include every inner package.
 
-You may also ignore test commands, for example to ignore code coverage add "code_coverage" to the ignored_commandsd array.
+You may also ignore test commands, for example to ignore code coverage add "code_coverage" to the ignored_commands array.
 
 **Note**: Packages should not include a trailing slash.
 
@@ -56,7 +56,11 @@ To integrate with codeship, first add your `config.yaml` as per all systems, the
 ```bash
 git clone --branch 1.0.0 https://github.com/ConnectedVentures/fresh8-gb-ci
 
+# For gb
 env GOPATH=$(pwd):$(pwd)/vendor python fresh8-gb-ci/ci.py
+
+# For glide 
+python fresh8-gb-ci/ci.py
 ```
 
 You will also need to install a few dependencies, add the following to your `Setup Commands`

@@ -16,11 +16,12 @@ to move it back to python2 style.
 
 from __future__ import print_function
 
-import os
 import subprocess
 import re
 import sys
-from config import config
+import logging
+
+from utils.config import get_config
 
 ___author___ = "Jim Hill (github.com/jimah)"
 ___credits___ = ["Jim Hill (github.com/jimah)",
@@ -33,6 +34,11 @@ ___maintainer___ = "Jim Hill"
 ___email___ = "jimi2204@googlemail.com"
 ___status___ = "Development"
 
+CONFIG = get_config()
+
+logging.basicConfig(level="DEBUG")
+logger = logging.getLogger(__name__)
+
 
 def error(*objs):
     """
@@ -41,16 +47,6 @@ def error(*objs):
 
     """
     print(*objs, file=sys.stderr)
-
-
-def validate_config():
-    """
-
-    Validates the configuration file, checks it has required fields
-
-    """
-    # TODO implement function when config is finalized
-    pass
 
 
 def code_coverage(package):
@@ -70,7 +66,7 @@ def code_coverage(package):
 
     # E.G `GOPATH=${PWD}:${PWD}/vendor go test pipeline/... -cover`
     p = subprocess.Popen(
-        ["GOPATH=" + gopath + " go test " + package + "/... -cover"],
+        ["go test {0}/... -cover".format(package)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -78,7 +74,7 @@ def code_coverage(package):
     out, err = p.communicate()
 
     if err is not None and not "\n":
-        print(err)
+        logger.error(err)
         has_error = True
 
     lines = out.split('\n')
@@ -102,23 +98,22 @@ def code_coverage(package):
             # See `elif "[no test files]"`
             coverage = coverage.group(0)
 
-        if package in config.code_coverage.ignored_packages:
+        if package in CONFIG.code_coverage.ignored_packages:
             continue
 
         if coverage is not None:
             cv = float(coverage[:-1])
 
-            if cv < config.code_coverage.threshold:
+            if cv < CONFIG.code_coverage.threshold:
                 err = True
-                output += (
-                    package + " under coverage threshold at " +
-                    coverage + "\n")
+                output += "{0} under coverage threshold at {1}\n".format(
+                    package, coverage)
 
             coverage_cum += cv
 
         elif "[no test files]" in line:
             err = True
-            output += (package + " has no tests.\n")
+            output += "{0} has no tests.\n".format(package)
 
         coverage_count += 1
 
@@ -126,22 +121,22 @@ def code_coverage(package):
         has_error = err
 
     if coverage_count == 0:
-        print("No packages available for coverage calculation")
+        logger.info("No packages available for coverage calculation")
         return
 
     total_coverage = round(coverage_cum / coverage_count, 2)
 
     if err:
-        print("CODE COVERAGE: FAIL")
-        print("Current coverage: " + str(total_coverage) + "%")
-        print("Coverage threshold: " +
-              str(config.code_coverage.threshold) + "%")
-        print(output)
+        logger.info("CODE COVERAGE: FAIL")
+        logger.info("Current coverage: {0}%".format(str(total_coverage)))
+        logger.info("Coverage threshold: {0}%"
+                    .format(str(CONFIG.code_coverage.threshold)))
+        logger.info(output)
     else:
-        print("CODE COVERAGE: PASS")
-        print("Current coverage: " + str(total_coverage) + "%")
-        print("Coverage threshold: " +
-              str(config.code_coverage.threshold) + "%")
+        logger.info("CODE COVERAGE: PASS")
+        logger.info("Current coverage: {0}%".format(str(total_coverage)))
+        logger.info("Coverage threshold: {0}%"
+                    .format(str(CONFIG.code_coverage.threshold)))
 
 
 def go_lint(package):
@@ -157,7 +152,7 @@ def go_lint(package):
     output = ""
 
     p = subprocess.Popen(
-        ["golint src/" + package + "/..."],
+        ["golint src/{0}/...".format(package)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -177,7 +172,7 @@ def go_lint(package):
         package = package.group(0)
         package = re.sub(file_pattern, '', package)
 
-        if package in config.golint.ignored_packages:
+        if package in CONFIG.golint.ignored_packages:
             continue
 
         err = True
@@ -187,10 +182,10 @@ def go_lint(package):
         has_error = err
 
     if err:
-        print("GOLINT: FAIL")
-        print(out)
+        logger.info("GOLINT: FAIL")
+        logger.info(out)
     else:
-        print("GOLINT: PASS")
+        logger.info("GOLINT: PASS")
 
 
 def go_timeouts():
@@ -202,8 +197,8 @@ def go_timeouts():
     """
 
     def get_error_message_for_line(match, pattern):
-        out = "{} contains default http function {} on line {}\n"
-        return out.format(match.group(1), pattern, match.group(2))
+        return "{0} contains default http function {1} on line {2}\n"\
+            .format(match.group(1), pattern, match.group(2))
 
     global has_error
 
@@ -220,7 +215,7 @@ def go_timeouts():
 
     for pattern in patterns:
         p = subprocess.Popen(
-            ["grep '" + pattern + "' src -R -n"],
+            ["grep '{0}' src -R -n".format(pattern)],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=True)
@@ -244,16 +239,15 @@ def go_timeouts():
         has_error = err
 
     if err:
-        print("GO TIMEOUTS: FAIL")
-        print(output)
+        logger.info("GO TIMEOUTS: FAIL")
+        logger.info(output)
 
         hint = "For more info on why this is bad, please read {}"
         hint = hint.format("https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")  # noqa
 
-        print(hint)
-        print()
+        logger.info(hint)
     else:
-        print("GO TIMEOUTS: PASS")
+        logger.info("GO TIMEOUTS: PASS")
 
 
 def go_vet(package):
@@ -269,7 +263,7 @@ def go_vet(package):
     output = ""
 
     p = subprocess.Popen(
-        ["go vet " + package + "/..."],
+        ["go vet {0}/...".format(package)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=True)
@@ -289,7 +283,7 @@ def go_vet(package):
         package = package.group(0)
         package = re.sub(file_pattern, '', package)
 
-        if package in config.go_vet.ignored_packages:
+        if package in CONFIG.go_vet.ignored_packages:
             continue
 
         err = True
@@ -299,50 +293,50 @@ def go_vet(package):
         has_error = err
 
     if err:
-        print("GO VET: FAIL")
-        print(output)
+        logger.info("GO VET: FAIL")
+        logger.info(output)
     else:
-        print("GO VET: PASS")
+        logger.info("GO VET: PASS")
 
 
 # Pulled from config.py in the same dir
-if config.all.project_type != "gb":
-    print(config.all.project_type)
-    print("Non gb projects unsupported")
+if CONFIG.all.project_type not in ["gb", "glide"]:
+    logger.critical("Non gb/glide projects unsupported: {0}"
+                    .format(CONFIG.all.project_type))
     sys.exit(0)
 
-if len(config.all.packages) == 0:
-    print("No packages listed to test")
+if len(CONFIG.all.packages) == 0:
+    logger.critical("No packages listed to test")
     sys.exit(1)
 
-gopath = "%s:%s/vendor" % (os.getcwd(), os.getcwd())
 # used to track whether errors have occured accross the tests
 has_error = False
 
-for package in config.all.packages:
-    print("BEGINNING TESTS FOR: " + package + "\n")
+for package in CONFIG.all.packages:
+    logger.info("BEGINNING TESTS FOR: {0}\n".format(package))
 
     # implement your ci tests here
-    if "code_coverage" not in config.all.ignored_commands:
+    if "code_coverage" not in CONFIG.all.ignored_commands:
         code_coverage(package)
-        print("")
+        logger.info("\n")
 
-    if "go_lint" not in config.all.ignored_commands:
+    if "go_lint" not in CONFIG.all.ignored_commands:
         go_lint(package)
-        print("")
+        logger.info("\n")
 
-    if "go_vet" not in config.all.ignored_commands:
+    if "go_vet" not in CONFIG.all.ignored_commands:
         go_vet(package)
-        print("")
+        logger.info("\n")
 
-    if "go_timeouts" not in config.all.ignored_commands:
+    if "go_timeouts" not in CONFIG.all.ignored_commands:
         go_timeouts()
-        print("")
+        logger.info("\n")
 
 
 if has_error:
-    print("Please rectify the above errors.")
-    print("Failure to comply will activate the trap door below your desk.")
+    logger.info("Please rectify the above errors.")
+    logger.info("Failure to comply will activate "
+                "the trap door below your desk.")
     sys.exit(1)
 else:
-    print("No errors found, we're proud of you.")
+    logger.info("No errors found, we're proud of you.")
