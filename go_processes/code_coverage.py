@@ -4,7 +4,7 @@ import re
 import os
 
 
-logging.basicConfig(level="DEBUG")
+logging.basicConfig(level="INFO")
 LOGGER = logging.getLogger(__name__)
 
 
@@ -14,12 +14,18 @@ class CodeCoverage:
     NOTESTFILES_IDENTIFIER = "[no test files]"
 
     REGEX_PATTERN_PACKAGE = "{0}((\/[a-zA-Z0-9\/-]+)?)"
+    REGEX_PATTERN_PACKAGE_GB = "\s(([a-zA-Z\/-]+(\/[a-zA-Z\/-]+)?))"
     REGEX_PATTERN_COVERAGE = "[0-9]{1,3}.[0-9]%"
     REGEX_PATTERN_FAIL = "^FAIL"
 
+    SCRIPTS = {
+        "glide": "go test `go list ./... | grep -v vendor` -cover",
+        "gb": "GOPATH={0} go test ./src/...".format(os.environ.get("GOPATH", None))
+    }
+
     def __init__(self, config):
         self.config = config
-        
+
     def get_coverage(self, base_package, has_error):
         """Run go test -cover, parses the output line by line.
 
@@ -50,7 +56,7 @@ class CodeCoverage:
 
             if package is None:
                 continue
-            package = package.group()
+            package = package.group().strip()
 
             if re.match(self.REGEX_PATTERN_FAIL, line):
                 output += "{0} FAILED".format(package)
@@ -68,8 +74,7 @@ class CodeCoverage:
                 coverage = coverage.group(0)
 
                 cv = float(coverage[:-1])
-
-                if cv <= self.config.code_coverage.threshold:
+                if cv < self.config.code_coverage.threshold:
                     has_error = True
                     output += "{0} under coverage threshold at {1}\n".format(
                         package, coverage)
@@ -109,8 +114,12 @@ class CodeCoverage:
             # Remove starting `.` if present as it breaks the regex.
             package = base_package[1:] \
                 if base_package.startswith('./') else base_package
-        LOGGER.debug("Package in regex: {0}".format(package))
-        package_pattern = re.compile(self.REGEX_PATTERN_PACKAGE.format(package))
+
+        if self.config.all.project_type == "gb" and\
+                        base_package == self.ALLIDENTIFIER:
+            package_pattern = re.compile(self.REGEX_PATTERN_PACKAGE_GB)
+        else:
+            package_pattern = re.compile(self.REGEX_PATTERN_PACKAGE.format(package))
         coverage_pattern = re.compile(self.REGEX_PATTERN_COVERAGE)
 
         return package_pattern, coverage_pattern
@@ -129,9 +138,10 @@ class CodeCoverage:
         :param package: string
         :return: (stdout, stderr)
         """
-
-        test_script = "go test `go list ./... | grep -v vendor` -cover".format(package) \
-            if package == self.ALLIDENTIFIER else "go test {0}/... -cover".format(package)
+        if package == self.ALLIDENTIFIER:
+            test_script = self.SCRIPTS[self.config.all.project_type]
+        else:
+            test_script = "go test {0}/... -cover".format(package)
         LOGGER.debug("Test script: {0}".format(test_script))
 
         p = subprocess.Popen(
@@ -158,4 +168,3 @@ class CodeCoverage:
 
         if err:
             LOGGER.info(output)
-
