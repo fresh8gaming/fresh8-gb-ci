@@ -20,7 +20,8 @@ class CodeCoverage:
 
     SCRIPTS = {
         "glide": "go test `go list ./... | grep -v vendor` -cover",
-        "gb": "GOPATH={0} go test ./src/...".format(os.environ.get("GOPATH", None))
+        "gb": "GOPATH={0} go test ./src/...".format(
+            os.environ.get("GOPATH", None))
     }
 
     def __init__(self, config):
@@ -44,7 +45,8 @@ class CodeCoverage:
             LOGGER.error(err)
             has_error = True
 
-        package_pattern, coverage_pattern = self._get_regex_patterns(base_package)
+        package_pattern, coverage_pattern = \
+            self._get_regex_patterns(base_package)
 
         coverage_count = 0
         coverage_cum = 0.0
@@ -115,11 +117,12 @@ class CodeCoverage:
             package = base_package[1:] \
                 if base_package.startswith('./') else base_package
 
-        if self.config.all.project_type == "gb" and\
-                        base_package == self.ALLIDENTIFIER:
+        if self.config.all.project_type == "gb" \
+                and base_package == self.ALLIDENTIFIER:
             package_pattern = re.compile(self.REGEX_PATTERN_PACKAGE_GB)
         else:
-            package_pattern = re.compile(self.REGEX_PATTERN_PACKAGE.format(package))
+            package_pattern = \
+                re.compile(self.REGEX_PATTERN_PACKAGE.format(package))
         coverage_pattern = re.compile(self.REGEX_PATTERN_COVERAGE)
 
         return package_pattern, coverage_pattern
@@ -160,7 +163,8 @@ class CodeCoverage:
         :param output: string
         :return:
         """
-        LOGGER.info("CODE COVERAGE: FAIL") if err else LOGGER.info("CODE COVERAGE: PASS")
+        LOGGER.info("CODE COVERAGE: FAIL") if err \
+            else LOGGER.info("CODE COVERAGE: PASS")
 
         LOGGER.info("Current coverage: {0}%".format(str(total_coverage)))
         LOGGER.info("Coverage threshold: {0}%"

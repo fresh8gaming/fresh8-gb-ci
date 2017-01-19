@@ -15,7 +15,7 @@ class GoLint:
 
     def __init__(self, config):
         self.config = config
-        
+
     def go_lint(self, package, has_error):
         """Run golint on all packages.
 
@@ -29,7 +29,8 @@ class GoLint:
 
         out, error_output = self._run_script(package)
 
-        package_pattern = re.compile(self.REGEX_PACKAGE_PATTERN.format(package))
+        package_pattern = re.compile(
+            self.REGEX_PACKAGE_PATTERN.format(package))
         file_pattern = re.compile(self.REGEX_FILE_PATTERN)
 
         lines = out.split('\n')
@@ -73,6 +74,7 @@ class GoLint:
         :param out: string
         :return:
         """
-        LOGGER.info("GOLINT: FAIL") if has_error else LOGGER.info("GOLINT: PASS")
+        LOGGER.info("GOLINT: FAIL") if has_error \
+            else LOGGER.info("GOLINT: PASS")
         if has_error:
             LOGGER.info(out)

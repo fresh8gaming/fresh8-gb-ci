@@ -34,16 +34,17 @@ class GoTimeouts:
             if out != '':
                 lines = out.split('\n')
                 file_pattern = re.compile(self.REGEX_FILE_PATTERN)
-    
+
                 for line in lines:
                     filename_match = re.match(file_pattern, line)
-    
+
                     if filename_match is None:
                         continue
-    
+
                     has_error = True
-                    output += self._get_error_message_for_line(filename_match, pattern)
-    
+                    output += self._get_error_message_for_line(
+                        filename_match, pattern)
+
         self._log_results(has_error, output)
         return has_error
 
@@ -71,7 +72,7 @@ class GoTimeouts:
             LOGGER.info(output)
 
             hint = "For more info on why this is bad, please read {}"
-            hint = hint.format("https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")  # noqa
+            hint = hint.format("https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/")  # NOQA
 
             LOGGER.info(hint)
         else:

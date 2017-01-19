@@ -15,7 +15,7 @@ class GoVet:
 
     def __init__(self, config):
         self.config = config
-        
+
     def go_vet(self, package, has_error):
         output = ""
 
@@ -62,4 +62,3 @@ class GoVet:
         LOGGER.info("GO VET: FAIL") if err else LOGGER.info("GO VET: PASS")
         if err:
             LOGGER.info(output)
-
