@@ -12,7 +12,7 @@ class TestCodeCoverage(unittest.TestCase):
     @patch('go_processes.code_coverage.CodeCoverage._run_tests')
     @patch('go_processes.code_coverage.CodeCoverage._log_results')
     def test_get_coverage_fail(self, log_results_patch, run_tests_patch):
-        run_tests_patch.return_value = (self._get_test_output_fail(), "Stuff")
+        run_tests_patch.return_value = (self._get_test_output_fail(), "Error")
 
         cc = CodeCoverage(self._mock_config())
         err = cc.get_coverage("./f8-jeeves", False)
@@ -25,13 +25,13 @@ class TestCodeCoverage(unittest.TestCase):
     @patch('go_processes.code_coverage.CodeCoverage._run_tests')
     @patch('go_processes.code_coverage.CodeCoverage._log_results')
     def test_get_coverage_pass(self, log_results_patch, run_tests_patch):
-        run_tests_patch.return_value = (self._get_test_output_pass(), False)
+        run_tests_patch.return_value = (self._get_test_output_pass(), None)
 
         cc = CodeCoverage(self._mock_config())
         err = cc.get_coverage("./f8-jeeves", False)
 
         self.assertFalse(err)
-        log_results_patch.assert_called_with(False, 100.0, "")
+        log_results_patch.assert_called_with(None, 100.0, "")
 
     def _mock_config(self):
         mock_coverage = Mock()
