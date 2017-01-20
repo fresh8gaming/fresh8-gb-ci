@@ -20,12 +20,12 @@ class TestCodeCoverage(unittest.TestCase):
         self.assertTrue(err)
         log_results_patch\
             .assert_called_with(True, 25.0,
-                                '/f8-jeeves has no tests.\n/f8-jeeves/environment has no tests.\n/f8-jeeves/service under coverage threshold at 0.0%\n/f8-jeeves/mypackage FAILED')  # NOQA
+                                '/f8-jeeves has no tests.\n/f8-jeeves/environment has no tests.\n/f8-jeeves/service under coverage threshold at 0.0%\n/f8-jeeves/mypackage FAILED.\n')  # NOQA
 
     @patch('go_processes.code_coverage.CodeCoverage._run_tests')
     @patch('go_processes.code_coverage.CodeCoverage._log_results')
     def test_get_coverage_pass(self, log_results_patch, run_tests_patch):
-        run_tests_patch.return_value = (self._get_test_output_pass(), "Stuff")
+        run_tests_patch.return_value = (self._get_test_output_pass(), False)
 
         cc = CodeCoverage(self._mock_config())
         err = cc.get_coverage("./f8-jeeves", False)
