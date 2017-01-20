@@ -42,8 +42,8 @@ class CodeCoverage:
         output = ""
         out, err = self._run_tests(base_package)
 
-        if err is not None and not "\n":
-            LOGGER.error(err)
+        if err is not None and err is not "\n":
+            LOGGER.info(err)
             has_error = True
 
         package_pattern, coverage_pattern = \
@@ -92,7 +92,7 @@ class CodeCoverage:
 
         if coverage_count == 0:
             LOGGER.info("No packages available for coverage calculation")
-            return
+            return has_error
 
         total_coverage = round(coverage_cum / coverage_count, 2)
 
