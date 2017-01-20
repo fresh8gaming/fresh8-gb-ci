@@ -26,6 +26,7 @@ class GoLint:
         :return: bool
         """
         output = ""
+        err = False
 
         out, error_output = self._run_script(package)
 
@@ -46,12 +47,12 @@ class GoLint:
             if package in self.config.golint.ignored_packages:
                 continue
 
-            has_error = True
+            err = True
             output += "{0}\n".format(line)
 
-        self._log_results(has_error, out)
+        self._log_results(err, out)
 
-        return has_error
+        return err if err and not has_error else has_error
 
     def _run_script(self, package):
         """Run GoLang script for linting.

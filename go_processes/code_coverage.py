@@ -38,6 +38,7 @@ class CodeCoverage:
         :param has_error: bool
         :return: bool
         """
+        err = False
         output = ""
         out, err = self._run_tests(base_package)
 
@@ -61,8 +62,8 @@ class CodeCoverage:
             package = package.group().strip()
 
             if re.match(self.REGEX_PATTERN_FAIL, line):
-                output += "{0} FAILED".format(package)
-                has_error = True
+                output += "{0} FAILED.\n".format(package)
+                err = True
                 continue
 
             if package in self.config.code_coverage.ignored_packages:
@@ -77,14 +78,14 @@ class CodeCoverage:
 
                 cv = float(coverage[:-1])
                 if cv < self.config.code_coverage.threshold:
-                    has_error = True
+                    err = True
                     output += "{0} under coverage threshold at {1}\n".format(
                         package, coverage)
 
                 coverage_cum += cv
 
             elif self.NOTESTFILES_IDENTIFIER in line:
-                has_error = True
+                err = True
                 output += "{0} has no tests.\n".format(package)
 
             coverage_count += 1
@@ -95,9 +96,9 @@ class CodeCoverage:
 
         total_coverage = round(coverage_cum / coverage_count, 2)
 
-        self._log_results(has_error, total_coverage, output)
+        self._log_results(err, total_coverage, output)
 
-        return has_error
+        return err if err and not has_error else has_error
 
     def _get_regex_patterns(self, base_package):
         """Return compiled regex patterns.

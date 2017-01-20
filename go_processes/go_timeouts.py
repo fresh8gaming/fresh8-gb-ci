@@ -27,6 +27,7 @@ class GoTimeouts:
         :return:
         """
         output = ""
+        err = False
 
         for pattern in self.PATTERNS:
             out, err_output = self._run_script(pattern)
@@ -41,12 +42,12 @@ class GoTimeouts:
                     if filename_match is None:
                         continue
 
-                    has_error = True
+                    err = True
                     output += self._get_error_message_for_line(
                         filename_match, pattern)
 
-        self._log_results(has_error, output)
-        return has_error
+        self._log_results(err, output)
+        return err if err and not has_error else has_error
 
     def _run_script(self, pattern):
         """Run GoLang script for timeouts.

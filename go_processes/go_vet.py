@@ -18,6 +18,7 @@ class GoVet:
 
     def go_vet(self, package, has_error):
         output = ""
+        err = False
 
         out, err_output = self._run_script(package)
 
@@ -37,12 +38,12 @@ class GoVet:
             if package in self.config.go_vet.ignored_packages:
                 continue
 
-            has_error = True
+            err = True
             output += line + "\n"
 
-        self._log_results(output, has_error)
+        self._log_results(output, err)
 
-        return has_error
+        return err if err and not has_error else has_error
 
     def _run_script(self, package):
         """Run go vet script.
