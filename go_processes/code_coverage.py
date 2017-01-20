@@ -42,7 +42,7 @@ class CodeCoverage:
         output = ""
         out, err = self._run_tests(base_package)
 
-        if err is not None and err is not "\n":
+        if err and err is not "\n":
             LOGGER.info(err)
             has_error = True
 
