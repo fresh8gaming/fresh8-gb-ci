@@ -27,12 +27,14 @@ You may also ignore test commands, for example to ignore code coverage add "code
 
 `code_coverage: threshold` is the % of test coverage a given package must be above to pass, this must be a decimal based value (as per example).
 
+`all: packages` can be marked as `all` to test everything. This will exclude the vendor.
+
 #### Example file
 
 ```YAML
 all:
   packages:
-   - "your_cool_package"
+   - "./your_cool_package"
   project_type: "gb"
   ignored_commands: []
 
