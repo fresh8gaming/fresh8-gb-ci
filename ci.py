@@ -96,6 +96,60 @@ def go_vet(package):
     has_error = GoVet(CONFIG).go_vet(package, has_error)
 
 
+def check_use_of_init(package):
+    """
+
+    Runs grep recursively through the source folder looking for instances of
+    the init() go function being used.
+
+    """
+    global has_error
+
+    err = False
+    output = ""
+
+    p = subprocess.Popen(
+        ["grep -n -R \"func init()\" src/" + package],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=True)
+
+    out, err_output = p.communicate()
+    output = ""
+
+    if out != '':
+        lines = out.split('\n')
+        package_pattern = re.compile(package + r'(\/[a-z\/]+)?.go')
+        file_pattern = re.compile(r'\/[a-z]+.go')
+
+        for line in lines:
+
+            if "_test.go" in line:
+                continue
+
+            package = re.search(package_pattern, line)
+
+            if package is None:
+                continue
+
+            package = package.group(0)
+            package = re.sub(file_pattern, '', package)
+
+            if package in config.check_use_of_init.ignored_packages:
+                continue
+
+            output += (line + '\n')
+            err = True
+
+    if err and not has_error:
+        has_error = err
+
+    if err:
+        print("USE OF INIT: FAIL")
+        print(output)
+    else:
+        print("USE OF INIT: PASS")
+
 # Pulled from config.py in the same dir
 if CONFIG.all.project_type not in ["gb", "glide"]:
     logger.critical("Non gb/glide projects unsupported: {0}"
@@ -128,6 +182,10 @@ for package in CONFIG.all.packages:
     if "go_timeouts" not in CONFIG.all.ignored_commands:
         go_timeouts()
         logger.info("\n")
+
+    if "check_use_of_init" not in config.all.ignored_commands:
+        check_use_of_init(package)
+        print("")
 
 
 if has_error:
